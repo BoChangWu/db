@@ -1,5 +1,6 @@
 from db_model import *
 
+# create your Parser here.
 # example
 class User_handler():
     def parse(self,data=None) -> User_Account:
