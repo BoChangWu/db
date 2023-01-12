@@ -8,14 +8,20 @@ class User_handler():
         if data != None:
             return User_Account(
                 name = data['name'],
-                fullname = data['fullname']
+                fullname = data['fullname'],
+                nickname = data['nickname'],
+                number  = data['number'],
+                gender = data['gender']
                 )
 
     def load(self,data: User_Account) -> dict:
         return {
             'id':data.id, 
             'name': data.name,
-            'fullname': data.fullname
+            'fullname': data.fullname,
+            'nickname' : data.nickname,
+            'number'  : data.number,
+            'gender' : data.gender
             }
 
 Model_Parser = {

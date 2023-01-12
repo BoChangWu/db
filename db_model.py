@@ -31,7 +31,7 @@ class User_Account(Base):
     def __repr__(self):
         return f"User(id={self.id!r},name={self.name!r}, fullname={self.fullname!r})"
 
-# 整合處
+
 Models = {
 'User_Account' : User_Account
 }

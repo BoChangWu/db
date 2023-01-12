@@ -172,12 +172,15 @@ class DB_sqlalchemy():
 
             self.session.commit()
 
+    ####### 以下開放自訂功能 #######
 '''
     tutorial: 
     https://docs.sqlalchemy.org/en/14/orm/quickstart.html#simple-select
     Selecting ORM Entities and Columns: 
     https://docs.sqlalchemy.org/en/14/tutorial/data_select.html#tutorial-selecting-orm-entities
 '''
+
+    
 
 
 
