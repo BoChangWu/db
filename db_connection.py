@@ -104,18 +104,30 @@ class DB_sqlalchemy():
             session.add_all(data_lst)
             session.commit()
 
-    def select_data(self,table:str,**kwargs) -> list:
-        
+    def select_data(self,table:str,order_by=None,group_by=None,offset=None,limit=None,**kwargs) -> list:
+        '''
+        order_by: col name, group_by: col name, limit: int
+        '''
 
         instance = self.session.query(Models[table])
 
         if kwargs:
 
             for i,k in kwargs.items():
-                instance= instance.filter(Models[table].cols[i] == k)
-        
+                instance = instance.filter(Models[table].cols[i] == k)
         else:
             instance = instance.all()
+            
+
+        if order_by:
+                instance = instance.order_by(order_by)
+        if group_by:
+                instance = instance.group_by(group_by)
+        if offset:
+                instance = instance.offset(offset=offset)
+        if limit:
+                instance = instance.limit(limit)
+        
         
         datas = []
         loader = Model_Parser[table]()
