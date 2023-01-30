@@ -1,3 +1,4 @@
+from datetime import date
 from db_model import *
 
 # create your Parser here.
@@ -11,7 +12,10 @@ class User_handler():
                 fullname = data['fullname'],
                 nickname = data['nickname'],
                 number  = data['number'],
-                gender = data['gender']
+                gender = data['gender'],
+                birth = data['birth'] if 'birth' in data.keys() else datetime.now(),
+                weight = data['weight']
+
                 )
 
     def load(self,data: User_Account) -> dict:

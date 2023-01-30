@@ -1,14 +1,11 @@
 from unittest import result
 from db_connection import *
-from setting import MSSQL
-
-sql = DB_sqlalchemy(MSSQL)
+from setting import MSSQL, MySQL
+from datetime import datetime
+sql = DB_sqlalchemy(MySQL)
 
 datas = [
-    {'name': 'Angela','fullname' : 'Angela Wang'},
-    {'name': 'Jian','fullname':'Jian Wang'},
-    {'name': 'Json', 'fullname': 'Json Wu'},
-    {'name': 'James','fullname':'James Lu'}
+    {'name': 'Karry','fullname' : 'Karry chen','nickname':'tudo','number':'0932','gender':1,'weight': 50.0},
     ]
 
 
@@ -16,15 +13,15 @@ datas = [
 # get tables
 # sql.get_tables()
 # create table
-# sql.create_table_all()
+sql.create_table_all()
 
 # migrations
 # sql.db_migrate('User_Account')
 
 #select
-res = sql.select_data('User_Account')
+# res = sql.select_data('User_Account')
 # res = sql.select_data_interval('User_Account','id',0,6)
-print(res)
+# print(res)
 
 # insert
 # sql.insert_data(datas,'User_Account')

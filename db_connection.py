@@ -10,14 +10,18 @@ from db_model_parser import *
 # DB Class
 class DB_sqlalchemy():
 
-    def __init__(self,db_info=None):
-        params = urllib.parse.quote_plus(f"DRIVER={'{SQL Server Native Client 11.0}'};"
-                                 f"SERVER={db_info['HOST']};"
-                                 f"DATABASE={db_info['DB']};"
-                                 f"UID={db_info['USER']};"
-                                 f"PWD={db_info['PASSWORD']}")
+    def __init__(self,db_info=None,is_mssql=False):
+        
+        if is_mssql:
+            params = urllib.parse.quote_plus(f"DRIVER={db_info['DRIVER']};"
+                                    f"SERVER={db_info['HOST']};"
+                                    f"DATABASE={db_info['DB']};"
+                                    f"UID={db_info['USER']};"
+                                    f"PWD={db_info['PASSWORD']}")
 
-        self.engine = create_engine('mssql+pyodbc:///?odbc_connect={}'.format(params))
+            self.engine = create_engine(f"{db_info['ENGINE']}:///?odbc_connect={params}")
+        else: 
+            self.engine = create_engine(f"{db_info['ENGINE']}://{db_info['USER']}:{db_info['PASSWORD']}@{db_info['HOST']}/{db_info['DB']}?charset=utf8mb4")
         self.session = Session(self.engine)
 
     def create_table_all(self) -> None:
