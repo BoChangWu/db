@@ -102,8 +102,7 @@ class DB_sqlalchemy():
 
             for data in datas:
 
-                parser = Model_Parser[table]()
-                data_lst.append(parser.parse(data))
+                data_lst.append(Model_Parser[table].parse(data))
 
             session.add_all(data_lst)
             session.commit()
@@ -134,10 +133,10 @@ class DB_sqlalchemy():
         
         
         datas = []
-        loader = Model_Parser[table]()
 
         for i in instance:
-            datas.append(loader.load(i))
+            print()
+            datas.append(Model_Parser[table].load(i))
         
         return datas
 
@@ -157,9 +156,10 @@ class DB_sqlalchemy():
         datas = []
 
         if instance:
-            loader = Model_Parser[table]()
+
             for i in instance:
-                datas.append(loader.load(i))
+                
+                datas.append(Model_Parser[table].load(i))
 
         return datas
 
