@@ -1,17 +1,36 @@
 from unittest import result
 from db_connection import *
-from db_model_parser import *
-from db_model import *
-from setting import MSSQL, MySQL
-from datetime import datetime
-sql = DB_sqlalchemy(MSSQL,is_mssql=True)
+from setting import MSSQL,MySQL
 
-datas = []
+sql = DB_sqlalchemy(MySQL)
+
+datas = [
+    {
+        'rack_type': 'goods', 
+        'rack_floor': 1,
+        'column': 4,
+        'row': 3, 
+        'rack_no': 'Rack01', 
+        'rack_name': 'Rack-1', 
+        'area_no': 'A-2', 
+        'area_name': 'Laser' 
+    },
+    {
+        'rack_type': 'faults', 
+        'rack_floor': 2,
+        'column': 4,
+        'row': 3, 
+        'rack_no': 'Rack02', 
+        'rack_name': 'Rack-2', 
+        'area_no': 'A-1', 
+        'area_name':  'ADE'
+    }]
 
 
 
 # get tables
-# sql.get_tables()
+# print(list(sql.show_tables()))
+
 # create table
 # sql.create_table_all()
 
@@ -19,26 +38,15 @@ datas = []
 # sql.db_migrate('User_Account')
 
 #select
-# res = sql.select_data('Parent')
+res = sql.show_racks('Rack_Station')
 # res = sql.select_data_interval('User_Account','id',0,6)
-# print(res)
+print(res[0]['storages'][0]['status'])
 
 # insert
 
-# m = {
-#     'name': 'mission_1',
-#     'sub_missions': ['S1','S2'] 
-# }
-# m['sub_missions'] = [Sub_Mission_handler.parse({'step': m['sub_missions'][k]}) for k in range(len(m['sub_missions'])) ]
-# sql.insert_data([m],'Main_Mission')
-user =[
-    {
-        'name': 'Jason',
-        'fullname':'JasonWu',
-        'nickname': 'Json'
-    }
-]
-sql.insert_data(user,'User_Account')
+# sql.set_racks(datas)
+
+
 # update
 # sql.update_datas('User_Account','name','Barney',fullname='Ted Mosby')
 

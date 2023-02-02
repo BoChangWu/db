@@ -24,9 +24,14 @@ class DB_sqlalchemy():
             self.engine = create_engine(f"{db_info['ENGINE']}://{db_info['USER']}:{db_info['PASSWORD']}@{db_info['HOST']}/{db_info['DB']}?charset=utf8mb4")
         self.session = Session(self.engine)
 
+
     def create_table_all(self) -> None:
         # 建立所有的table , 若有新增table , 可以再呼叫一次此function即可建立
         Base.metadata.create_all(self.engine)
+
+    def show_tables(self) -> list:
+
+        return Base.metadata.tables.keys()
 
     def compare_col(self,table:str,new:list,old:list) -> None:
         '''
@@ -78,7 +83,7 @@ class DB_sqlalchemy():
 
         目前我們使用的 schema 都是dbo 最外層的 schema可以寫死, 也可以不要給
         '''
-    
+        '''
         if table:
 
             new = Models[table].__table__.columns.keys()
@@ -91,8 +96,26 @@ class DB_sqlalchemy():
                 new = Models[t].__table__.columns.keys()
                 t_info = inspector.get_columns(t,schema='dbo')
                 self.compare_col(new,t_info)
+        此為 db 為 mssql 做法
+        '''
+        schemas = inspector.get_schema_names()        
+        if table:
+            for schema in schemas:        
+                new = Models[table].__table__.columns.keys()
+                t_info = inspector.get_columns(table,schema=schema)
+                if new and t_info:
+                    self.compare_col(new,t_info)
 
-    
+        else:
+            for schema in schemas:
+
+                for table in inspector.get_table_names(schema=schema):
+                    new = Models[table].__table__.columns.keys()
+                    t_info = inspector.get_columns(table,schema=schema)
+
+                    if new and t_info:
+                        self.compare_col(new,t_info)
+        
 
     def insert_data(self,datas,table:str) -> None:
 
@@ -135,7 +158,6 @@ class DB_sqlalchemy():
         datas = []
 
         for i in instance:
-            print()
             datas.append(Model_Parser[table].load(i))
         
         return datas
@@ -156,9 +178,7 @@ class DB_sqlalchemy():
         datas = []
 
         if instance:
-
             for i in instance:
-                
                 datas.append(Model_Parser[table].load(i))
 
         return datas
@@ -189,6 +209,68 @@ class DB_sqlalchemy():
             self.session.commit()
 
     ####### 以下開放自訂功能 #######
+    def set_racks(self,datas:list) -> None:
+        racks = self.select_data('Rack_Station')
+
+        new_racks = []
+        for data in datas:
+            new = True
+
+            for rack in racks:
+                if rack['rack_no'] == datas['rack_no']:
+                    new = False
+                    break
+            
+            if new:
+                
+                station_lst = []
+                update_time =datetime.now()
+                
+                for r in range(data['row']):
+                    for c in range(data['column']):
+                        store_no = c+ r*(data['column']-1)
+                        default_name = f"{data['rack_no']}-{r}-{c}"
+                        
+                        status = { 
+                            'foup_no': 'Null', 
+                            'sort_no': store_no, 
+                            'action': 'None', 
+                            'status': 'Idle',
+                            'stuff_no': 'Null',
+                            'update_time': update_time
+                        }
+
+                        station = {
+                            'storage_no': store_no, 
+                            'storage_name': default_name, 
+                            'robot_port': default_name, 
+                            'status': [Rack_Storage_Status_handler.parse(status)]
+                        }
+
+                        station_lst.append(Rack_Storage_Station_handler.parse(station))
+                data['storages'] = station_lst
+                new_racks.append(data)
+        self.insert_data(new_racks,'Rack_Station')
+    
+    def show_racks(self, rack_name=None) -> list:
+        
+        racks = self.select_data('Rack_Station')
+        
+        datas = []
+        for rack in racks:
+
+            data = dict(rack)
+            storages = [ Rack_Storage_Station_handler.load(s) for s in rack['storages']]
+            data['storages'] =storages
+
+            for i,storage in enumerate(storages):
+                
+                status = Rack_Storage_Status_handler.load(storage['status'][0])
+                data['storages'][i]['status'] = status
+
+            datas.append(data)
+                     
+        return datas
 '''
     tutorial: 
     https://docs.sqlalchemy.org/en/14/orm/quickstart.html#simple-select

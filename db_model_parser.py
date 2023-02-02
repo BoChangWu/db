@@ -1,64 +1,111 @@
-from cgitb import handler
-from datetime import date
 from db_model import *
 
 # create your Parser here.
 # example
-class User_handler():
-    def parse(data=None) -> User_Account:
+class eRack_Comnct_Log_handler():
+    def parse(data=None) -> eRack_Comnct_Log:
 
         if data != None:
-            return User_Account(
-                name = data['name'],
-                fullname = data['fullname'],
-                nickname = data['nickname'],
-
+            return eRack_Comnct_Log(
+                secs_function = data['secs_function'],
+                function_class = data['function_class'],
+                action = data['action'],
+                message  = data['message'],
                 )
 
-    def load(data: User_Account) -> dict:
+    def load(data: eRack_Comnct_Log) -> dict:
         return {
             'id':data.id, 
-            'name': data.name,
-            'fullname': data.fullname,
-            'nickname' : data.nickname,
+            'create_time': data.create_time,
+            'secs_function': data.secs_function,
+            'function_class': data.function_class,
+            'action': data.action,
+            'message' : data.message
             }
-class Main_Mission_handler():
 
-    def parse(data=None) -> Main_Mission:
-        print(type(data))
-        if data != None:
-            return Main_Mission(
-                name = data['name'],
-                sub_missions = data['sub_missions']
-            )
-
-    def load(data: Main_Mission) -> dict:
-
-        return {
-            'id': data.id,
-            'name': data.name,
-            'sub_missions': data.sub_missions
-        }
-
-class Sub_Mission_handler():
-
-    def parse(data=None) -> Sub_Mission:
+class Rack_Station_handler():
+    
+    def parse(data=None) -> Rack_Station:
 
         if data != None:
-            return Sub_Mission(
-                step = data['step'],
-            )
+            return Rack_Station(
+                rack_type = data['rack_type'], 
+                rack_floor = data['rack_floor'],
+                column = data['column'],
+                row = data['row'], 
+                rack_no = data['rack_no'], 
+                rack_name = data['rack_name'], 
+                area_no = data['area_no'], 
+                area_name = data['area_name'],
+                storages = data['storages']
+        )
 
-    def load(data: Sub_Mission) -> dict:
+    def load(data: Rack_Station) -> dict:
 
         return {
-            'id': data.id,
-            'step': data.step,
-            'main_mission_id': data.main_mission_id
+            'id': data.id, 
+            'rack_type': data.rack_type, 
+            'rack_floor': data.rack_floor,
+            'column': data.column,
+            'row': data.row, 
+            'rack_no': data.rack_no, 
+            'rack_name': data.rack_name, 
+            'area_no': data.area_no, 
+            'area_name': data.area_name,
+            'storages': data.storages 
         }
+
+class Rack_Storage_Station_handler():
+    
+    def parse(data=None) -> Rack_Storage_Station:
+
+        if data != None:
+            return Rack_Storage_Station( 
+                storage_no = data['storage_no'], 
+                storage_name = data['storage_name'], 
+                robot_port = data['robot_port'],
+                status = data['status']
+            )
+
+    def load(data: Rack_Storage_Station) -> dict:
+        
+        return {
+            'id': data.id, 
+            'storage_no': data.storage_no, 
+            'storage_name': data.storage_name, 
+            'robot_port': data.robot_port,
+            'status': data.status,
+            'rack_id': data.rack_id,
+        }
+
+class Rack_Storage_Status_handler():
+    def parse(data=None) -> Rack_Storage_Status:
+
+        if data != None:
+            return Rack_Storage_Status(
+                foup_no = data['foup_no'], 
+                sort_no = data['sort_no'], 
+                action = data['action'], 
+                status = data['status'],
+                stuff_no = data['stuff_no'],
+                update_time = data['update_time'],
+            )
+    
+    def load(data: Rack_Storage_Status) -> dict:
+        return {
+            'id': data.id,
+            'foup_no': data.foup_no, 
+            'sort_no': data.sort_no, 
+            'action': data.action, 
+            'status': data.status,
+            'stuff_no': data.stuff_no,
+            'update_time': data.update_time,
+            'storage_id': data.storage_id,
+        }
+
 Model_Parser = {
-    'User_Account': User_handler,
-    'Main_Mission': Main_Mission_handler,
-    'Sub_Mission': Sub_Mission_handler
-
+    'eRack_Comnct_Log': eRack_Comnct_Log_handler,
+    'Rack_Storage_Status': Rack_Storage_Status_handler,
+    'Rack_Station': Rack_Station_handler,
+    'Rack_Storage_Station' : Rack_Storage_Station_handler
 }
